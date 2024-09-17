@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicios de APIs con Rick and Morty</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #results { margin-top: 20px; }
+        .card-columns {
+            column-count: 1;
+        }
+        @media (min-width: 576px) {
+            .card-columns {
+                column-count: 2;
+            }
+        }
+        @media (min-width: 992px) {
+            .card-columns {
+                column-count: 3;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Ejercicios de APIs con Rick and Morty</h1>
+        <div class="my-3">
+            <button class="btn btn-primary m-1" onclick="ejercicio1()">Ejercicio 1: Mostrar Títulos</button>
+            <button class="btn btn-danger m-1" onclick="ejercicio2()">Ejercicio 2: Eliminar Personaje</button>
+            <button class="btn btn-primary m-1" onclick="ejercicio3()">Ejercicio 3: Listar Personajes</button>
+            <button class="btn btn-primary m-1" onclick="ejercicio4()">Ejercicio 4: Información de Usuario</button>
+            <button class="btn btn-danger m-1" onclick="ejercicio5()">Ejercicio 5: Eliminar To-Do</button>
+            <button class="btn btn-primary m-1" onclick="ejercicio6()">Ejercicio 6: Mostrar Información en Accordion</button>
+            <button class="btn btn-danger m-1" onclick="ejercicio7()">Ejercicio 7: Eliminar Foto</button>
+            <button class="btn btn-primary m-1" onclick="ejercicio8()">Ejercicio 8: Mostrar Clima</button>
+            <button class="btn btn-primary m-1" onclick="ejercicio9()">Ejercicio 9: Listar Tareas</button>
+            <button class="btn btn-primary m-1" onclick="ejercicio10()">Ejercicio 10: Mostrar Artículos en Carousel</button>
+        </div>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        let personajesSimulados = [];
+
+        async function ejercicio1() {
+            try {
+                const response = await axios.get('https://rickandmortyapi.com/api/character');
+                const characters = response.data.results.slice(0, 10);
+                personajesSimulados = characters;
+                const list = document.createElement('ul');
+                list.classList.add('list-group');
+                characters.forEach(character => {
+                    const listItem = document.createElement('li');
+                    listItem.classList.add('list-group-item');
+                    listItem.textContent = character.name;
+                    list.appendChild(listItem);
+                });
+                document.getElementById('results').innerHTML = '';
+                document.getElementById('results').appendChild(list);
+            } catch (error) {
+                console.error('Error obteniendo los nombres:', error);
+                mostrarAlerta('Error al obtener los nombres de los personajes.', 'danger');
+            }
+        }
+
+			   // Ejercicio 2: 
+		
+
+
+        // Ejercicio 3: 
+        async function ejercicio3() {
+            try {
+                const response = await axios.get('https://rickandmortyapi.com/api/character');
+                const characters = response.data.results.slice(0, 10);
+                const cardContainer = document.createElement('div');
+                cardContainer.classList.add('card-columns');
+                characters.forEach(character => {
+                    const card = document.createElement('div');
+                    card.classList.add('card', 'mb-3');
+                    card.innerHTML = `
+                        <img src="${character.image}" class="card-img-top" alt="${character.name}">
+                        <div class="card-body">
+                            <h5 class="card-title">${character.name}</h5>
+                            <p class="card-text">Especie: ${character.species}</p>
+                        </div>
+                    `;
+                    cardContainer.appendChild(card);
+                });
+                document.getElementById('results').innerHTML = '';
+                document.getElementById('results').appendChild(cardContainer);
+            } catch (error) {
+                console.error('Error obteniendo los personajes:', error);
+                mostrarAlerta('Error al obtener los personajes.', 'danger');
+            }
+        }
+
+        // Ejercicio 4: 
+        async function ejercicio4() {
+            try {
+                const response = await axios.get('https://rickandmortyapi.com/api/character/5'); // Personaje con ID 5
+                const character = response.data;
+                const card = document.createElement('div');
+                card.classList.add('card', 'mb-3');
+                card.innerHTML = `
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img src="${character.image}" class="card-img" alt="${character.name}">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">${character.name}</h5>
+                                <p class="card-text"><strong>Email:</strong> N/A</p>
+                                <p class="card-text"><strong>Dirección:</strong> ${character.location.name}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('results').innerHTML = '';
+                document.getElementById('results').appendChild(card);
+            } catch (error) {
+                console.error('Error obteniendo el personaje:', error);
+                mostrarAlerta('Error al obtener la información del personaje.', 'danger');
+            }
+        }
+
+        // Ejercicio 5: 
+   
+
+        // Ejercicio 6:
+        async function ejercicio6() {
+            try {
+                const response = await axios.get('https://rickandmortyapi.com/api/character');
+                const characters = response.data.results.slice(0, 10);
+
+                const accordion = document.createElement('div');
+                accordion.id = 'accordionExample';
+                accordion.classList.add('accordion');
+
+                characters.forEach((character, index) => {
+                    const card = document.createElement('div');
+                    card.classList.add('card');
+
+                    card.innerHTML = `
+                        <div class="card-header" id="heading${index}">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link ${index !== 0 ? 'collapsed' : ''}" type="button" data-toggle="collapse" data-target="#collapse${index}" aria-expanded="${index === 0 ? 'true' : 'false'}" aria-controls="collapse${index}">
+                                    ${character.name}
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="collapse${index}" class="collapse ${index === 0 ? 'show' : ''}" aria-labelledby="heading${index}" data-parent="#accordionExample">
+                            <div class="card-body">
+                                <img src="${character.image}" class="img-thumbnail mb-2" alt="${character.name}" style="width: 100px;">
+                                <p><strong>Especie:</strong> ${character.species}</p>
+                                <p><strong>Estado:</strong> ${character.status}</p>
+                                <p><strong>Género:</strong> ${character.gender}</p>
+                                <p><strong>Ubicación:</strong> ${character.location.name}</p>
+                            </div>
+                        </div>
+                    `;
+                    accordion.appendChild(card);
+                });
+
+                document.getElementById('results').innerHTML = '';
+                document.getElementById('results').appendChild(accordion);
+            } catch (error) {
+                console.error('Error obteniendo los personajes:', error);
+                mostrarAlerta('Error al obtener los personajes.', 'danger');
+            }
+        }
+
+        // Ejercicio 7: 
+     
+
+        // Ejercicio 8: 
+        async function ejercicio8() {
+            const apiKey = '09b5b1794f0a1dd79f64e8bef9b02546'; 
+            const city = "Moron,Ar"; 
+            try {
+                const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`);
+                const data = response.data;
+
+                const temp = data.main.temp - 273.15;
+                const description = data.weather[0].description; 
+                const iconCode = data.weather[0].icon;
+                const iconUrl = `http://openweathermap.org/img/wn/${iconCode}@2x.png`;
+
+                const card = document.createElement('div');
+                card.classList.add('card', 'mb-3', 'text-center');
+                card.style.maxWidth = '18rem';
+                card.innerHTML = `
+                    <div class="card-body">
+                        <h5 class="card-title">Clima en ${city}</h5>
+                        <img src="${iconUrl}" alt="${description}">
+                        <p class="card-text">Temperatura: ${temp.toFixed(2)} °C</p>
+                        <p class="card-text">Descripción: ${description}</p>
+                    </div>
+                `;
+                document.getElementById('results').innerHTML = '';
+                document.getElementById('results').appendChild(card);
+            } catch (error) {
+                console.error('Error obteniendo el clima:', error);
+                mostrarAlerta('Error al obtener los datos del clima.', 'danger');
+            }
+        }
+
+        // Ejercicio 9
+        async function ejercicio9() {
+            try {
+                const response = await axios.get('https://rickandmortyapi.com/api/character');
+                let characters = response.data.results.slice(0, 20); // Obtener 20 personajes para mayor variedad
+
+               
+                characters.sort((a, b) => {
+                    if (a.status === 'Alive' && b.status !== 'Alive') return -1;
+                    if (a.status !== 'Alive' && b.status === 'Alive') return 1;
+                    return 0;
+                });
+
+                const table = document.createElement('table');
+                table.classList.add('table', 'table-striped');
+                table.innerHTML = `
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Estado</th>
+                            <th>Especie</th>
+                            <th>Género</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${characters.map(character => `
+                            <tr>
+                                <td>${character.name}</td>
+                                <td>${character.status}</td>
+                                <td>${character.species}</td>
+                                <td>${character.gender}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                `;
+                document.getElementById('results').innerHTML = '';
+                document.getElementById('results').appendChild(table);
+            } catch (error) {
+                console.error('Error obteniendo los personajes:', error);
+                mostrarAlerta('Error al obtener las tareas (personajes).', 'danger');
+            }
+        }
+
+        // Ejercicio 10
+        async function ejercicio10() {
+            try {
+                const response = await axios.get('https://rickandmortyapi.com/api/episode');
+                const episodes = response.data.results.slice(0, 10); // Limitar a 10 episodios
+
+                const carousel = document.createElement('div');
+                carousel.id = 'carouselExampleIndicators';
+                carousel.classList.add('carousel', 'slide');
+                carousel.setAttribute('data-ride', 'carousel');
+
+                // Indicadores
+                const indicators = document.createElement('ol');
+                indicators.classList.add('carousel-indicators');
+                episodes.forEach((_, index) => {
+                    const li = document.createElement('li');
+                    li.setAttribute('data-target', '#carouselExampleIndicators');
+                    li.setAttribute('data-slide-to', index);
+                    if (index === 0) li.classList.add('active');
+                    indicators.appendChild(li);
+                });
+                carousel.appendChild(indicators);
+
+                // Inner
+                const inner = document.createElement('div');
+                inner.classList.add('carousel-inner');
+                episodes.forEach((episode, index) => {
+                    const item = document.createElement('div');
+                    item.classList.add('carousel-item');
+                    if (index === 0) item.classList.add('active');
+                    item.innerHTML = `
+                        <div class="d-flex justify-content-center align-items-center" style="height:300px; background-color: #f8f9fa;">
+                            <div class="text-center">
+                                <h5>${episode.name}</h5>
+                                <p>Air Date: ${episode.air_date}</p>
+                                <p>Episode: ${episode.episode}</p>
+                            </div>
+                        </div>
+                    `;
+                    inner.appendChild(item);
+                });
+                carousel.appendChild(inner);
+
+                // Controles
+                const prev = document.createElement('a');
+                prev.classList.add('carousel-control-prev');
+                prev.href = '#carouselExampleIndicators';
+                prev.setAttribute('role', 'button');
+                prev.setAttribute('data-slide', 'prev');
+                prev.innerHTML = `
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                `;
+                carousel.appendChild(prev);
+
+                const next = document.createElement('a');
+                next.classList.add('carousel-control-next');
+                next.href = '#carouselExampleIndicators';
+                next.setAttribute('role', 'button');
+                next.setAttribute('data-slide', 'next');
+                next.innerHTML = `
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                `;
+                carousel.appendChild(next);
+
+                document.getElementById('results').innerHTML = '';
+                document.getElementById('results').appendChild(carousel);
+
+                // Inicializar el carousel
+                $('.carousel').carousel();
+            } catch (error) {
+                console.error('Error obteniendo los episodios:', error);
+                mostrarAlerta('Error al obtener los episodios.', 'danger');
+            }
+        }
+
+     
+        function mostrarAlerta(mensaje, tipo) {
+            const alert = document.createElement('div');
+            alert.classList.add('alert', `alert-${tipo}`, 'alert-dismissible', 'fade', 'show');
+            alert.setAttribute('role', 'alert');
+            alert.innerHTML = `
+                ${mensaje}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            `;
+            document.getElementById('results').innerHTML = '';
+            document.getElementById('results').appendChild(alert);
+        }
+    </script>
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
